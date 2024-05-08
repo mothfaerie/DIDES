@@ -9,8 +9,6 @@
         --babyPink: #F4C2C2;
         --lightPink: #FFB6C1;
         --white: #FFFFFF;
-        --red: #FF0000;
-        --black: #000000;
     }
 
     body {
@@ -44,19 +42,18 @@
     }
 
     .profile-img {
-        width: 30vw;
-        height: 30vw;
-        border-radius: 50%;
-        margin-bottom: 20px;
-        object-fit: cover;
+        width: 30vw; /* Sets the width as 30% of the viewport width */
+        height: 30vw; /* Sets the height to maintain aspect ratio based on width */
+        border-radius: 50%; /* Make the image round */
+        margin-bottom: 20px; /* Space between the image and the text */
+        object-fit: cover; /* Ensures the image covers the space without being distorted */
     }
 
     h1 {
-        font-size: 8vw; /* Font size relative to viewport width for responsiveness */
+        font-size: 70px;
         margin: 0;
         padding: 0;
         font-weight: normal;
-        white-space: nowrap; /* Prevent text wrapping */
     }
 
     button {
@@ -64,11 +61,23 @@
         padding: 10px 20px;
         margin-top: 20px;
         cursor: pointer;
-        background-color: var(--babyPink);
+        background-color: #F4C2C2;
         color: #ffffff;
         border: none;
         border-radius: 5px;
         transition: background-color 0.3s;
+    }
+
+    button:hover {
+        background-color: #f8f8f8;
+    }
+
+    button::before {
+        content: "☆☆☆☆☆";
+    }
+
+    button:hover::before {
+        content: "★☆☆☆☆";
     }
 
     .credit {
@@ -76,7 +85,7 @@
         bottom: 10px;
         left: 10px;
         color: white;
-        font-size: 2.5vw; /* Scalable font size to make it responsive on mobile devices */
+        font-size: 12px;
         font-family: 'Arial', sans-serif;
     }
 
@@ -93,27 +102,40 @@
     document.addEventListener('DOMContentLoaded', () => {
         const button = document.querySelector('button');
         const centerContent = document.querySelector('.center-content');
-        const img = document.querySelector('.profile-img');
-        const h1 = document.querySelector('h1');
-        const body = document.body;
+        const menuIcon = document.querySelector('.menu-icon');
+        const colors = ['var(--babyPink)', 'var(--lightPink)', 'var(--white)']; // Array of colors
 
-        button.addEventListener('click', function handleClick() {
-            if (button.textContent.includes("Rate")) { // Initial click changes layout
-                img.src = 'https://westbendcurrent.files.wordpress.com/2017/01/nosedive3.jpg';
-                h1.textContent = 'FUCK YOU!';
-                body.style.background = 'linear-gradient(270deg, var(--red), var(--black))';
-                button.textContent = 'FUCK YOU';
-            } else { // Subsequent clicks spawn "FUCK YOU" texts
+        let lastTime = 0; // Variable to store the time of the last text spawn
+
+        button.addEventListener('click', () => {
+            centerContent.style.display = 'none'; // Hide the initial content
+            menuIcon.style.display = 'none'; // Hide the menu icon
+            document.body.style.background = 'black'; // Change background to black
+
+            document.addEventListener('mousemove', function(e) {
+                const now = Date.now();
+                if (now - lastTime < 40) { // Throttle to limit spawning new text to every 200ms
+                    return;
+                }
+                lastTime = now;
+
+                const x = e.clientX;
+                const y = e.clientY;
+                const fontSize = Math.random() * (200 - 10) + 40; // Random font size between 40px and 80px
+                const colorIndex = Math.floor(Math.random() * colors.length); // Randomly select a color
+
                 const text = document.createElement('div');
                 text.textContent = 'FUCK YOU';
                 text.style.position = 'absolute';
-                text.style.left = `${Math.random() * window.innerWidth}px`;
-                text.style.top = `${Math.random() * window.innerHeight}px`;
-                text.style.color = 'white';
-                text.style.fontSize = '20px';
+                text.style.left = `${x}px`;
+                text.style.top = `${y}px`;
+                text.style.color = colors[colorIndex]; // Apply the random color
+                text.style.fontSize = `${fontSize}px`;
                 text.style.userSelect = 'none';
-                body.appendChild(text);
-            }
+                text.style.pointerEvents = 'none'; // Make sure the text does not interfere with mouse events
+
+                document.body.appendChild(text);
+            });
         });
     });
 </script>
@@ -122,7 +144,7 @@
 <div class="center-content">
     <img src="https://hellogiggles.com/wp-content/uploads/sites/7/2016/11/08/BDH-Black-Mirror-4.png" alt="Profile Image" class="profile-img">
     <h1>Hi, I'm Lacie!</h1>
-    <button>Rate me!</button>
+    <button></button>
 </div>
 <div class="credit">
     Nosedive<br>
